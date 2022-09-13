@@ -26,8 +26,11 @@ jobs:
 
       - name: populate tag length
         id: tagLength
+        env:
+          tag: ${{ inputs.tag }}
         run: |
-          TL = $(echo ${{ inputs.tag }} | jq '. | length') 
+          echo "$tag"
+          TL=$(echo $tag | jq '. | length') 
           echo "::set-output name=tag_length::$TL"
 
       - name: Validate Backfill deployment
