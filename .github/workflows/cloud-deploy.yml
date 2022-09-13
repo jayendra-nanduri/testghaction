@@ -23,8 +23,15 @@ jobs:
         run: |
           echo "Invalid environment ${{ inputs.env }}"
           exit 1
+
+      - name: populate tag length
+        id: tagLength
+        run: |
+          TL = $(echo ${{ inputs.tag }} | jq '. | length') 
+          echo "::set-output name=tag_length::$TL"
+
       - name: Validate Backfill deployment
-        if: ${{ inputs.Backfill && inputs.tag.length == 0 }}
+        if: ${{ inputs.Backfill && !(steps.tagLength.outputs.tag_length > 0) }}
         run: |
           echo "For Backfill, please input tag value: ${{ inputs.tag }}"
           exit 1
