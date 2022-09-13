@@ -1,0 +1,30 @@
+name: Cloud deploy
+on:
+  workflow_dispatch: 
+    inputs: 
+      Backfill:
+        description: Backfill(unselect this tag for MAIN-create tag)
+        required: true
+        type: boolean
+      env:
+        required: true
+        type: string
+      tag:
+        required: false
+        type: string  
+       
+        
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invalid environment check
+        if: ${{ !contains(fromJson('["dv01", "dv02","dv03","dv04","dv05"]'), inputs.env) }} 
+        run: |
+          echo "Invalid environment ${{ inputs.env }}"
+          exit 1
+      - name: Validate Backfill deployment
+        if: ${{ inputs.Backfill && inputs.tag.length == 0 }}
+        run: |
+          echo "For Backfill, please input tag value: ${{ inputs.tag }}"
+          exit 1
